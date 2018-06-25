@@ -1,5 +1,7 @@
 import React, { Component } from 'react'
+import { formatTime } from '../utils'
 import dataList from '../stocks'
+import '../styles.css'
 
 class App extends Component {
     state = {
@@ -7,11 +9,11 @@ class App extends Component {
         stock: {
             Name: 'Stock Name'
         },
-        stocks: []
+        stocks: [],
+        error: false
     }
 
     componentDidMount() {
-        console.log(this.state.stock)
         this.setState({ stocks: Object.values(dataList) }, function() {
             let stock = this.state.stocks.find(item => {
                 return item.Symbol === 'MSFT'
@@ -42,8 +44,12 @@ class App extends Component {
                             <td>Market cap</td>
                             <td>{this.state.stock.MarketCap}</td>
                         </tr>
+                        <tr>
+                            <td>{this.state.stock.Timestamp}</td>
+                        </tr>
                     </tbody>
                 </table>
+                <div id="error" className={(this.state.error) ? "visible" : "hidden"}>Please enter a valid symbol</div>
                 <form onSubmit={e => this._submit(e)}>
                     <input onChange={e => this._handleChange(e)}
                         type="text" placeholder="AAPL, MSFT, etc." />
@@ -63,8 +69,13 @@ class App extends Component {
         let stock = this.state.stocks.find(item => {
             return item.Symbol === this.state.symbol
         })
-        this.setState({ stock })
-        e.target.reset()
+
+        if (this.state.stocks.indexOf(stock) > -1) {
+            this.setState({ stock, error: false, symbol: '' })
+            e.target.reset()
+        } else {
+            this.setState({ error: true })
+        }
     }
 }
 
