@@ -1,13 +1,19 @@
 import React, { Component } from 'react'
-import { formatTime } from '../utils'
+import { formatTime, formatNumber } from '../utils'
 import dataList from '../stocks'
+import '../../node_modules/material-dashboard/assets/css/material-dashboard.min.css'
 import '../styles.css'
 
 class App extends Component {
     state = {
         symbol: '',
         stock: {
-            Name: 'Stock Name'
+            Name: 'Stock Name',
+            Open: 0,
+            Volume: 0,
+            MarketCap: 0,
+            Low: 0,
+            High: 0
         },
         stocks: [],
         error: false
@@ -24,39 +30,43 @@ class App extends Component {
 
     render() {
         return (
-            <div>
+            <div className="app">
                 <h1>{this.state.stock.Name}</h1>
-                <table>
+                <table className="table">
                     <tbody>
                         <tr>
                             <td>Range</td>
-                            <td>{this.state.stock.Low} - {this.state.stock.High}</td>
+                            <td className="text-right">{this._getRange()}</td>
                         </tr>
                         <tr>
                             <td>Open</td>
-                            <td>{this.state.stock.Open}</td>
+                            <td className="text-right">{this.state.stock.Open.toFixed(2)}</td>
                         </tr>
                         <tr>
                             <td>Volume</td>
-                            <td>{this.state.stock.Volume}</td>
+                            <td className="text-right">{formatNumber(this.state.stock.Volume)}</td>
                         </tr>
                         <tr>
                             <td>Market cap</td>
-                            <td>{this.state.stock.MarketCap}</td>
+                            <td className="text-right">{formatNumber(this.state.stock.MarketCap)}</td>
                         </tr>
                         <tr>
-                            <td>{this.state.stock.Timestamp}</td>
+                            <td></td>
+                            <td className="text-right">{formatTime(this.state.stock.Timestamp)}</td>
                         </tr>
                     </tbody>
                 </table>
                 <div id="error" className={(this.state.error) ? "visible" : "hidden"}>Please enter a valid symbol</div>
-                <form onSubmit={e => this._submit(e)}>
-                    <input onChange={e => this._handleChange(e)}
-                        type="text" placeholder="AAPL, MSFT, etc." />
-                    <button type="submit">Submit</button>
+                <form className="flex" onSubmit={e => this._submit(e)}>
+                    <input onChange={e => this._handleChange(e)} type="text"  placeholder="AAPL, MSFT, etc." />
+                    <button className="btn btn-primary" type="submit">Submit</button>
                 </form>
             </div>
         )
+    }
+
+    _getRange = () => {
+        return this.state.stock.Low.toFixed(2) + ' - ' + this.state.stock.High.toFixed(2)
     }
 
     _handleChange = e => {
